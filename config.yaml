@@ -1,0 +1,20 @@
+# DocMind AI Configuration
+
+llm:
+  provider: openai          # openai, anthropic, google
+  model: gpt-4o-mini        # Model name
+  temperature: 0            # 0 = deterministic, 1 = creative
+
+embeddings:
+  model: text-embedding-3-small
+
+chunking:
+  chunk_size: 1000
+  chunk_overlap: 200
+
+retrieval:
+  top_k: 4
+  search_type: hybrid       # similarity, mmr, hybrid
+
+vector_store:
+  persist_directory: ./data/vector_store
