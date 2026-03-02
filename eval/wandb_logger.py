@@ -43,9 +43,7 @@ def log_metrics(run, metrics: dict[str, float]) -> None:
         run: Active wandb run.
         metrics: Dict of metric_name -> score.
     """
-    for key, value in metrics.items():
-        run.summary[key] = value
-    run.summary.update()
+    run.summary.update(metrics)
 
 
 def log_per_question_results(
