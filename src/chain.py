@@ -1,4 +1,5 @@
 """RAG chain construction with LCEL for DocMind AI."""
+from __future__ import annotations
 
 from langchain_core.documents import Document
 from langchain_core.language_models import BaseChatModel
@@ -130,3 +131,41 @@ def query(
         "input": question,
         "chat_history": chat_history or [],
     })
+
+
+def query_with_contexts(
+    retriever: BaseRetriever,
+    llm: BaseChatModel,
+    question: str,
+) -> dict:
+    """Run a query and return the answer together with raw contexts.
+
+    This is used by the RAGAS evaluation pipeline, which needs access to
+    the retrieved context strings alongside the generated answer.
+
+    Args:
+        retriever: The document retriever.
+        llm: The chat model.
+        question: User question.
+
+    Returns:
+        Dict with keys "question", "answer", and "contexts".
+    """
+    # Retrieve
+    docs = retriever.invoke(question)
+    contexts = [doc.page_content for doc in docs]
+
+    # Generate answer using the same RAG prompt
+    context_str = _format_docs(docs)
+    prompt = _RAG_PROMPT.invoke({
+        "context": context_str,
+        "chat_history": [],
+        "input": question,
+    })
+    answer = (llm | StrOutputParser()).invoke(prompt)
+
+    return {
+        "question": question,
+        "answer": answer,
+        "contexts": contexts,
+    }

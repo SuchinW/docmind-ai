@@ -18,3 +18,17 @@ retrieval:
 
 vector_store:
   persist_directory: ./data/vector_store
+
+evaluation:
+  sample_docs_dir: ./data/sample_docs
+  testset_path: ./eval/testset/testset.json
+  num_questions: 10
+  wandb_project: docmind-eval
+  methods:
+    - similarity
+    - mmr
+    - hybrid
+    - rerank
+    - multi_query
+    - contextual_compression
+    - parent_document

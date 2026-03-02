@@ -1,0 +1,53 @@
+Retrieval-Augmented Generation: A Comprehensive Overview
+
+What is RAG?
+
+Retrieval-Augmented Generation (RAG) is a technique that enhances large language models by providing them with relevant external knowledge at inference time. Instead of relying solely on the parametric knowledge stored in the model's weights during training, RAG systems retrieve pertinent documents from an external knowledge base and include them in the prompt context. This approach was first formalized by Lewis et al. in their 2020 paper "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks."
+
+The RAG Pipeline
+
+A typical RAG pipeline consists of three main phases: indexing, retrieval, and generation.
+
+During the indexing phase, documents are loaded from various sources, split into manageable chunks, converted into vector embeddings using an embedding model, and stored in a vector database. The chunking strategy is critical because it determines the granularity of retrieval. Chunks that are too large may contain irrelevant information, while chunks that are too small may lose important context.
+
+The retrieval phase begins when a user submits a query. The query is embedded using the same embedding model, and a similarity search is performed against the vector database to find the most relevant chunks. Common similarity metrics include cosine similarity, dot product, and Euclidean distance. The top-K most similar chunks are selected as context for the generation step.
+
+In the generation phase, the retrieved chunks are formatted and injected into the LLM's prompt alongside the user's question. The LLM then generates an answer grounded in the provided context. A well-designed system prompt instructs the LLM to only answer based on the given context and to acknowledge when information is insufficient.
+
+Advanced Retrieval Strategies
+
+Basic semantic search often falls short in real-world applications. Several advanced strategies have been developed to improve retrieval quality.
+
+Hybrid search combines dense vector retrieval with sparse keyword-based retrieval like BM25. This captures both semantic similarity and exact keyword matches. Reciprocal Rank Fusion (RRF) is commonly used to merge results from multiple retrievers by combining their rankings.
+
+Multi-query retrieval uses an LLM to generate multiple variations of the user's original question. Each variation is used to retrieve documents independently, and the results are combined. This helps overcome the limitation that a single query might not capture all relevant aspects of the user's information need.
+
+Contextual compression uses an LLM to extract only the relevant portions from retrieved chunks, reducing noise and improving the signal-to-noise ratio of the context provided to the generation model.
+
+Parent document retrieval indexes small chunks for precise matching but returns the larger parent documents for richer context. This balances the trade-off between retrieval precision and context completeness.
+
+Re-ranking applies a cross-encoder model to score each retrieved chunk against the original query. Cross-encoders are more accurate than bi-encoders for relevance scoring because they process the query and document together rather than independently. The chunks are then reordered based on these scores.
+
+Evaluation Metrics for RAG
+
+Evaluating RAG systems requires metrics that assess both the retrieval and generation components.
+
+Context Precision measures whether the retrieved chunks that are relevant are ranked higher than irrelevant ones. Context Recall measures the proportion of relevant information from the ground truth that is captured in the retrieved contexts.
+
+Faithfulness evaluates whether the generated answer is factually consistent with the retrieved context. An answer with high faithfulness does not contain hallucinated information that contradicts or goes beyond the provided context.
+
+Answer Relevancy measures how well the generated answer addresses the user's question. It penalizes answers that are incomplete or contain unnecessary information.
+
+The RAGAS (Retrieval Augmented Generation Assessment) framework provides automated computation of these metrics using LLM-as-a-judge approaches, making it possible to evaluate RAG systems without extensive human annotation.
+
+Common Challenges and Solutions
+
+RAG systems face several challenges in production. The lost-in-the-middle problem occurs when LLMs pay less attention to information in the middle of long contexts, favoring content at the beginning and end. Mitigation strategies include limiting context length and placing the most relevant chunks first.
+
+Chunk boundary issues arise when relevant information is split across chunk boundaries. Overlapping chunks and sentence-aware splitting help address this. Document-level metadata and hierarchical indexing can also provide missing context.
+
+Query-document mismatch happens when the user's query is phrased differently from how information appears in the documents. Query expansion, hypothetical document embeddings (HyDE), and fine-tuned embedding models can bridge this gap.
+
+RAG vs Fine-tuning
+
+RAG and fine-tuning serve different purposes. RAG is ideal when the knowledge base changes frequently, when source attribution is important, and when the system needs to handle diverse domains. Fine-tuning is better suited for teaching the model a specific style, format, or behavior, and for tasks where the knowledge is relatively static. Many production systems combine both approaches, using fine-tuning to optimize the model's behavior and RAG to keep its knowledge current.

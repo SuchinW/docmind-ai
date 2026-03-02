@@ -1,0 +1,45 @@
+Transformers: The Architecture Behind Modern AI
+
+Introduction to Transformers
+
+The Transformer architecture, introduced in the landmark 2017 paper "Attention Is All You Need" by Vaswani et al., revolutionized natural language processing and has since become the foundation of virtually all modern large language models. Before Transformers, sequence-to-sequence tasks relied heavily on recurrent neural networks (RNNs) and long short-term memory networks (LSTMs), which processed tokens sequentially and struggled with long-range dependencies.
+
+The Self-Attention Mechanism
+
+The core innovation of the Transformer is the self-attention mechanism, also known as scaled dot-product attention. For each token in a sequence, self-attention computes three vectors: a Query (Q), a Key (K), and a Value (V). These are obtained by multiplying the input embedding by learned weight matrices WQ, WK, and WV.
+
+The attention score between any two positions is computed as the dot product of the query of one position with the key of another, scaled by the square root of the key dimension. This scaling prevents the dot products from becoming too large, which would push the softmax function into regions with extremely small gradients.
+
+Mathematically, Attention(Q, K, V) = softmax(QK^T / sqrt(d_k)) * V, where d_k is the dimension of the key vectors. This operation allows every token to attend to every other token in the sequence simultaneously, capturing long-range dependencies in a single step rather than requiring information to propagate through many sequential steps as in RNNs.
+
+Multi-Head Attention
+
+Rather than performing a single attention function, Transformers use multi-head attention, which runs multiple attention operations in parallel with different learned projections. Each head can learn to focus on different types of relationships. For example, one head might learn syntactic dependencies while another captures semantic similarity. The outputs of all heads are concatenated and linearly projected to produce the final output.
+
+The typical configuration uses 8 to 16 attention heads. GPT-3, for example, uses 96 attention heads with a model dimension of 12288, meaning each head operates on a 128-dimensional subspace.
+
+The Encoder-Decoder Structure
+
+The original Transformer has two main components. The encoder processes the input sequence and produces a rich contextual representation. It consists of a stack of identical layers, each containing a multi-head self-attention sub-layer followed by a position-wise feed-forward network, with residual connections and layer normalization applied after each sub-layer.
+
+The decoder generates the output sequence one token at a time. It is similar to the encoder but includes an additional cross-attention layer that attends to the encoder's output. The decoder also uses masked self-attention to prevent positions from attending to subsequent positions, ensuring that predictions for position i depend only on known outputs at positions less than i.
+
+Positional Encoding
+
+Since the self-attention mechanism has no inherent notion of token order, Transformers add positional encodings to the input embeddings. The original paper used sinusoidal functions of different frequencies, but modern variants like BERT and GPT use learned positional embeddings. More recent architectures use Rotary Position Embeddings (RoPE) or ALiBi (Attention with Linear Biases) to better handle variable-length sequences.
+
+Transformer Variants in Practice
+
+BERT (Bidirectional Encoder Representations from Transformers) uses only the encoder stack and is trained with a masked language modeling objective, making it excel at understanding tasks like classification and named entity recognition.
+
+GPT (Generative Pre-trained Transformer) uses only the decoder stack with causal masking, making it ideal for text generation. GPT-4 and Claude are based on this decoder-only architecture, scaled to hundreds of billions of parameters.
+
+T5 (Text-to-Text Transfer Transformer) uses the full encoder-decoder architecture and frames all NLP tasks as text-to-text problems, providing a unified approach to diverse tasks.
+
+Training and Scaling
+
+Transformers are typically pre-trained on massive text corpora using self-supervised objectives. The key advantage is that self-attention allows for efficient parallelization during training, unlike RNNs which must process tokens sequentially. This parallelism, combined with modern GPU clusters, enables training on trillions of tokens.
+
+Scaling laws research has shown that model performance improves predictably with increases in model size, dataset size, and compute budget. This has driven the trend toward ever-larger models, from BERT's 340 million parameters to GPT-4's estimated 1.8 trillion parameters.
+
+The Transformer architecture's combination of parallelizable training, effective long-range dependency modeling, and scalability has made it the dominant paradigm in modern AI, powering applications from chatbots and code generation to protein folding and drug discovery.

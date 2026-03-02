@@ -26,5 +26,13 @@ streamlit>=1.40.0
 python-dotenv>=1.0.0
 pyyaml>=6.0.0
 
+# Evaluation
+ragas>=0.2.0
+datasets>=2.14.0
+sentence-transformers>=3.0.0
+
+# Experiment Tracking
+wandb>=0.18.0
+
 # Utilities
 tiktoken>=0.7.0
